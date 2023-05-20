@@ -23,16 +23,10 @@ use std::sync::Arc;
 use crate::connection::tls::MaybeUpgradeTls;
 use crate::net::{self, BufferedSocket, Socket};
 
-//use crate::connection::MaybeTlsStream;
-//use crate::io::BufStream;
-//use sqlx_rt::TcpStream;
-
 pub(crate) struct MssqlStream {
     // A trait object is okay here as the buffering amortizes the overhead of both the dynamic
     // function call as well as the syscall.
     inner: BufferedSocket<Box<dyn Socket>>,
-
-    //inner: BufStream<MaybeTlsStream<TcpStream>>,
 
     // how many Done (or Error) we are currently waiting for
     pub(crate) pending_done_count: usize,
@@ -77,25 +71,26 @@ impl MssqlStream {
 
         // write out the packet header, leaving room for setting the packet length later
 
+        //find the length of the payload
+        let mut buf = Vec::default();
+        payload.encode_with(&mut buf, ());
+        let data_size = buf.len();
+        let header_size = 8;
+        let len = (data_size + header_size) as u16;
+
+        let header_packet = PacketHeader {
+            r#type: ty,
+            status: Status::END_OF_MESSAGE,
+            length: len,
+            server_process_id: 0,
+            packet_id: 1,
+        };
+
+        //write the header
         let mut len_offset = 0;
-
-        self.inner.write_with(
-            PacketHeader {
-                r#type: ty,
-                status: Status::END_OF_MESSAGE,
-                length: 0,
-                server_process_id: 0,
-                packet_id: 1,
-            },
-            &mut len_offset,
-        );
-
-        // write out the payload
+        self.inner.write_with(header_packet, &mut len_offset);
+        //write the packet
         self.inner.write(payload);
-
-        // overwrite the packet length now that we know it
-        //let len = self.inner.wbuf.len();
-        //self.inner.wbuf[len_offset..(len_offset + 2)].copy_from_slice(&(len as u16).to_be_bytes());
     }
 
     // receive the next packet from the database
@@ -112,13 +107,11 @@ impl MssqlStream {
             ));
         }
 
-        let mut payload = BytesMut::new();
+        let mut payload: BytesMut;
 
         loop {
-            todo!("FIX");
-            //self.inner
-            //    .read_raw_into(&mut payload, (header.length - 8) as usize)
-            //    .await?;
+            let len = (header.length - 8) as usize;
+            payload = self.inner.read_buffered(len).await?;
 
             if header.status.contains(Status::END_OF_MESSAGE) {
                 break;
@@ -212,10 +205,7 @@ impl MssqlStream {
     }
 
     pub(crate) async fn wait_until_ready(&mut self) -> Result<(), Error> {
-        todo!("FIX");
-        // if !self.wbuf.is_empty() {
-        //     self.flush().await?;
-        // }
+        self.inner.flush().await?;
 
         while self.pending_done_count > 0 {
             let message = self.recv_message().await?;
