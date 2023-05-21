@@ -1,4 +1,5 @@
-use sqlx_core::connection::LogSettings;
+use sqlx_core::{connection::LogSettings, net::tls::CertificateInput};
+use std::env::var;
 
 mod connect;
 mod parse;
@@ -13,6 +14,10 @@ pub struct MssqlConnectOptions {
     pub(crate) database: String,
     pub(crate) password: Option<String>,
     pub(crate) log_settings: LogSettings,
+    pub(crate) ssl_mode: MssqlSslMode,
+    pub(crate) ssl_root_cert: Option<CertificateInput>,
+    pub(crate) ssl_client_cert: Option<CertificateInput>,
+    pub(crate) ssl_client_key: Option<CertificateInput>,
 }
 
 impl Default for MssqlConnectOptions {
@@ -30,6 +35,13 @@ impl MssqlConnectOptions {
             username: String::from("sa"),
             password: None,
             log_settings: Default::default(),
+            ssl_root_cert: var("MSSSLROOTCERT").ok().map(CertificateInput::from),
+            ssl_client_cert: var("MSSSLCERT").ok().map(CertificateInput::from),
+            ssl_client_key: var("MSSSLKEY").ok().map(CertificateInput::from),
+            ssl_mode: var("MSSSLMODE")
+                .ok()
+                .and_then(|v| v.parse().ok())
+                .unwrap_or_default(),
         }
     }
 

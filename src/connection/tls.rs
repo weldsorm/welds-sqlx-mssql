@@ -20,14 +20,6 @@ async fn maybe_upgrade<S: Socket>(
     mut socket: S,
     options: &MssqlConnectOptions,
 ) -> Result<Box<dyn Socket>, Error> {
-    // TODO: make ssl
+    // TODO: make ssl upgrades work
     Ok(Box::new(socket))
-}
-
-async fn request_upgrade(
-    socket: &mut impl Socket,
-    _options: &MssqlConnectOptions,
-) -> Result<bool, Error> {
-    // TODO: support SSL connections
-    Ok(false)
 }

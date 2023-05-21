@@ -50,7 +50,7 @@ impl MssqlConnection {
                 server_name: "",
                 client_interface_name: "",
                 language: "",
-                database: &*options.database,
+                database: &options.database,
                 client_id: [0; 6],
             },
         );
