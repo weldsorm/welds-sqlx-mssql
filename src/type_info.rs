@@ -22,11 +22,3 @@ impl Display for MssqlTypeInfo {
         f.pad(self.name())
     }
 }
-
-#[cfg(feature = "any")]
-impl From<MssqlTypeInfo> for crate::any::AnyTypeInfo {
-    #[inline]
-    fn from(ty: MssqlTypeInfo) -> Self {
-        crate::any::AnyTypeInfo(crate::any::type_info::AnyTypeInfoKind::Mssql(ty))
-    }
-}

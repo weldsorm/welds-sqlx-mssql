@@ -1,34 +1,14 @@
-#  [package]
-#  name = "welds-sqlx-mssql"
-#  version = "0.1.0"
-#  edition = "2021"
-#  
-#  # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-#  
-#  [dependencies]
-
-
-
-
-
 [package]
 name = "welds-sqlx-mssql"
 edition = "2021"
 repository = "https://github.com/weldsorm/welds"
-#description = "Fork of sqlx mssql driver starting from the when it was droped"
 description = "Mssql driver implementation for SQLx. Not for direct use; (Fork of sqlx mssql driver starting from the when it was dropped.)"
 version = "0.7.0-alpha.3"
-
-#version.workspace = true
-#license.workspace = true
-#edition.workspace = true
-#authors.workspace = true
-#repository.workspace = true
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
 
 [features]
+default=[]
 json = ["sqlx-core/json", "serde"]
 any = ["sqlx-core/any"]
 offline = ["sqlx-core/offline", "serde/derive"]
@@ -54,13 +34,6 @@ rsa = "0.8.0"
 sha1 = { version = "0.10.1", default-features = false }
 sha2 = { version = "0.10.0", default-features = false }
 
-# Type Integrations (versions inherited from `[workspace.dependencies]`)
-# bigdecimal = { workspace = true, optional = true }
-# chrono = { workspace = true, optional = true }
-# rust_decimal = { workspace = true, optional = true }
-# time = { workspace = true, optional = true }
-# uuid = { workspace = true, optional = true }
-
 # Misc
 encoding_rs = { version = "0.8.30" }
 uuid = { version = "1.0", default-features = false, features = ["std"] }
@@ -85,5 +58,4 @@ stringprep = "0.1.2"
 thiserror = "1.0.35"
 tracing = { version = "0.1.37", features = ["log"] }
 whoami = { version = "1.2.1", default-features = false }
-
 serde = { version = "1.0.144", optional = true }

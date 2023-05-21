@@ -18,13 +18,3 @@ impl Extend<MssqlQueryResult> for MssqlQueryResult {
         }
     }
 }
-
-#[cfg(feature = "any")]
-impl From<MssqlQueryResult> for crate::any::AnyQueryResult {
-    fn from(done: MssqlQueryResult) -> Self {
-        crate::any::AnyQueryResult {
-            rows_affected: done.rows_affected,
-            last_insert_id: None,
-        }
-    }
-}

@@ -5,6 +5,9 @@ extern crate sqlx_core;
 
 use crate::executor::Executor;
 
+#[cfg(feature = "any")]
+pub mod any;
+
 mod arguments;
 mod column;
 mod connection;
