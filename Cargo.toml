@@ -4,6 +4,7 @@ edition = "2021"
 repository = "https://github.com/weldsorm/welds"
 description = "Mssql driver implementation for SQLx. Not for direct use; (Fork of sqlx mssql driver starting from the when it was dropped.)"
 version = "0.7.0-alpha.3"
+license = "MIT OR Apache-2.0"
 
 [workspace]
 
